@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GardenApp.ViewModel"
+             xmlns:m="clr-namespace:GardenApp.Model"
+             xmlns:drawable="clr-namespace:GardenApp.Drawable"
+             x:Class="GardenApp.GardenPage"
+             Title="GardenPage"
+             x:DataType="vm:GardenVM"
+             >
+    
+  
+        
+
+    <Grid
+        ColumnDefinitions="0.35*, 0.45*, 0.20*"
+        RowDefinitions="0.1*, 0.1*, 0.1*, 0.1*, 0.1*, 0.5*"
+        Padding="12"
+        ColumnSpacing="5"
+        RowSpacing="5"
+        >
+        
+        <Frame
+            Grid.Row="1"
+            Grid.RowSpan="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            >
+            
+            <GraphicsView 
+                Drawable="{Binding GardenDrawable}"
+                HeightRequest="255"
+                WidthRequest="255"
+                x:Name="GardenMap"
+                >
+            
+            </GraphicsView>
+        </Frame>
+
+        
+
+        <Entry
+            Text="{Binding Garden.Name, Mode=TwoWay}"
+            Grid.Column="0"
+            Grid.Row="0"/>
+
+        <Entry
+            Text="{Binding Garden.Description, Mode=TwoWay}"
+            Grid.Column="1"
+            Grid.Row="0"/>
+        
+        <Button
+            Text="Share"
+            Command="{Binding ShareGardenCommand}"
+            Grid.Column="2"
+            Grid.Row="0"
+            />
+
+        <Button
+            Command="{Binding SaveGardenCommand}"
+            Text="Save"
+            Grid.Column="2"
+            Grid.Row="1"
+            />
+        
+
+        
+        <Button
+            Command="{Binding EditAreaCommand}"
+            CommandParameter="{Binding Garden.Location}"
+            Text="Location"
+            Grid.Column="2"
+            Grid.Row="3"
+            />
+
+        <Button
+            Command="{Binding ReturnToMainCommand}"
+            Text="return"
+            Grid.Column="2"
+            Grid.Row="2"
+            />
+
+
+        <Button
+            Command="{Binding EditGardenObjectCommand}"
+            Text="Add obj"
+            Grid.Column="2"
+            Grid.Row="4"
+            />
+
+        <CollectionView
+            Grid.Row="5"
+            Grid.ColumnSpan="3"
+            ItemsSource="{Binding Garden.Objects}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate
+                    x:DataType="m:GardenObject">
+                    <Frame
+                        HasShadow="True">
+                        <Grid
+                            ColumnDefinitions="0.5*, 0.1*, 0.1*, 0.3*"
+                            RowDefinitions="auto, auto, auto, auto"
+                            Padding="2"
+                            RowSpacing="3"
+                            >
+
+                            <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Text="{Binding Name}"
+                                    />
+                            <Label
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Text="{Binding Type}"
+                                    />
+                            <Label
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Text="{Binding Description}"
+                                    />
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Text="{Binding ObjectLocation}"
+                                />
+
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Text="Edit"
+                                BackgroundColor="DarkGoldenrod"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:GardenVM}}, Path=EditGardenObjectCommand}"
+                                CommandParameter="{Binding .}"
+                                />
+
+                            <Button
+                                Grid.Row="3"
+                                Grid.Column="3"
+                                Text="Remove"
+                                BackgroundColor="Red"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:GardenVM}}, Path=GardenObjectDeleteCommand}"
+                                CommandParameter="{Binding .}"
+                                />
+
+
+                        </Grid>
+                    </Frame>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GardenApp.ViewModel"
+             x:Class="GardenApp.GardenObjectPage"
+             Title="GardenObjectPage"
+             x:DataType="vm:GardenObjectVM">
+    <Grid
+        RowDefinitions="0.1*, 0.4*, 0.1*, 0.1*, 0.1*, 0.1*, 0.1*"
+        ColumnDefinitions="0.35*, 0.45*, 0.2*"
+        ColumnSpacing="7"
+        RowSpacing="7"
+        Padding="7">
+
+        <Frame
+            Grid.Column="0"
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            Grid.RowSpan="3"
+            >
+
+            <GraphicsView
+                Drawable="{Binding GardenDrawable}"
+                WidthRequest="255"
+                HeightRequest="255"
+                x:Name="GardenMap"
+                />
+
+        </Frame>
+
+        <Label 
+            Text="object name:"
+            Grid.Column="0"
+            Grid.Row="3"
+            />
+        
+        <Entry
+            Text="{Binding GardenObject.Name}"
+            Grid.Column="1"
+            Grid.Row="3"
+            />
+
+        <Label 
+            Text="object type:"
+            Grid.Column="0"
+            Grid.Row="4"
+            />
+
+        <Entry
+            Text="{Binding GardenObject.Type}"
+            Grid.Column="1"
+            Grid.Row="4"
+            />
+
+        <Label 
+            Text="object description:"
+            Grid.Column="0"
+            Grid.Row="5"
+            />
+
+        <Entry
+            Text="{Binding GardenObject.Description}"
+            Grid.Column="1"
+            Grid.Row="5"
+            />
+
+        <Label 
+            Text="object location:"
+            Grid.Column="0"
+            Grid.Row="6"
+            />
+
+        <Label
+            Text="{Binding ObjectLocationStr}"
+            Grid.Column="1"
+            Grid.Row="6"
+            />
+
+        <Button 
+            Command="{Binding EditLocationCommand}"
+            CommandParameter="{Binding GardenObject.ObjectLocation}"
+            Text="Edit location"
+            Grid.Column="2"
+            Grid.Row="0"
+            />
+
+        
+
+        <Button
+            Command="{Binding ReturnCommand}"
+            Text="Return"
+            Grid.Column="2"
+            Grid.Row="2"
+            />
+
+
+
+
+
+    </Grid>
+</ContentPage>

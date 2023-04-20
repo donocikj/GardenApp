@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GardenApp.ViewModel"
+             xmlns:sens="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
+             x:Class="GardenApp.AreaPage"
+             Title="AreaPage"
+             x:DataType="vm:AreaVM"
+             >
+
+    <Grid
+        ColumnDefinitions="0.2*, 0.3*, 0.3*, 0.2*"
+        RowDefinitions="0.1*, 0.5*, 0.2*, 0.2*"
+        Padding="5">
+        
+        <Label
+            Grid.ColumnSpan="3"
+            Grid.Row="0"
+            Text="{Binding AreaDesc}"/>
+
+        <CollectionView
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            Grid.Row="1"
+            ItemsSource="{Binding Points}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate
+                    x:DataType="sens:Location"
+                    >
+                    <Frame
+                        HasShadow="True"
+                        BorderColor="Gray"
+                        >
+                        <Grid
+                            Padding="3"
+                            RowDefinitions="auto, auto"
+                            ColumnDefinitions="0.15*, 0.15*, 0.15*, 0.15*, 0.1*, 0.1*, 0.1*"
+                            ColumnSpacing="2"
+                            >
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="Lat:"/>
+                            <Entry
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding Latitude}"/>
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Text="Lon:"/>
+                            <Entry
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Text="{Binding Longitude}"/>
+                            <Button
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AreaVM}}, Path=MovePointInAreaUpCommand}"
+                                CommandParameter="{Binding .}"
+                                Grid.Row="0"
+                                Grid.Column="4"
+                                BackgroundColor="Blue"
+                                Text="up"
+                                />
+                            <Button
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AreaVM}}, Path=MovePointInAreaDownCommand}"
+                                CommandParameter="{Binding .}"
+                                Grid.Row="0"
+                                Grid.Column="5"
+                                BackgroundColor="Blue"
+                                Text="down"
+                                />
+                            <Button
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AreaVM}}, Path=RemoveLocationFromAreaCommand}"
+                                CommandParameter="{Binding .}"
+                                Grid.Row="0"
+                                Grid.Column="6"
+                                BackgroundColor="DarkRed"
+                                Text="X"
+                                />
+                            <Label 
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="Accy"
+                                />
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="{Binding Accuracy}"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            
+            
+            
+        </CollectionView>
+
+        <Label
+            Text="current loc"
+            Grid.Column="0"
+            Grid.Row="2"
+            />
+        <Label
+            Text="{Binding CurrentLocationStr}"
+            Grid.Column="1"
+            Grid.Row="2"
+            />
+
+        <Button
+            Grid.Column="0"
+            Grid.Row="3"
+            Text="Add"
+            Command="{Binding AddLocationToAreaCommand}"/>
+        
+        <Button
+            Grid.Column="1"
+            Grid.Row="3"
+            Text="Refresh location"
+            Command="{Binding RefreshCurrentLocationCommand}"/>
+        
+        <Button
+            Grid.Column="2"
+            Grid.Row="3"
+            Text="Finish"
+            Command="{Binding FinishAreaDefinitionCommand}"/>
+
+
+
+    </Grid>
+</ContentPage>

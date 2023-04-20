@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GardenApp.ViewModel"
+             x:Class="GardenApp.MainPage"
+             x:DataType="vm:GardenVM"
+             >
+
+    <Grid
+        RowDefinitions="6*, *, *"
+        ColumnDefinitions="*, *, *"
+        Padding="33"
+        RowSpacing="25"
+        ColumnSpacing="25">
+
+        <Rectangle
+            Grid.ColumnSpan="3"
+            BackgroundColor="LawnGreen"
+            />
+
+        <Entry
+            Text="My Garden"
+            Grid.Row="1"
+            Grid.Column="0"
+            />
+
+        <Button
+            Command="{Binding LoadGardenCommand}"
+            Text="Load default" 
+            Grid.Row="2" 
+            Grid.Column="0" />
+
+        <Label
+            Text="New Garden"
+            Grid.Row="1"
+            Grid.Column="1"
+            />
+
+        <Button 
+            Command="{Binding PickGardenCommand}"
+            Text="Load file"
+            Grid.Row="2"
+            Grid.Column="1"
+            />
+
+        <Button
+            Command="{Binding CreateGardenCommand}"
+            Text="new" 
+            Grid.Row="2" 
+            Grid.Column="2"/>
+
+    </Grid>
+
+</ContentPage>
