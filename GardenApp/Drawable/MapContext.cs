@@ -15,18 +15,34 @@ namespace GardenApp.Drawable
         private double northBoundary;
         private double southBoundary;
 
-        public double WestBoundary { get { return westBoundary; } set { westBoundary = value; } }
-        public double EastBoundary { get { return eastBoundary; } set { eastBoundary = value; } }
-        public double NorthBoundary { get { return northBoundary; } set { northBoundary = value; } }
-        public double SouthBoundary { get { return southBoundary;} set { southBoundary = value; } }
+        private double centerX;
+        private double centerY;
 
-        public void setContext(Area area, RectF dirtyRect)
+        public double WestBoundary { get { return westBoundary; } }
+        public double EastBoundary { get { return eastBoundary; }  }
+        public double NorthBoundary { get { return northBoundary; } }
+        public double SouthBoundary { get { return southBoundary;} }
+
+        public double CenterX { get { return centerX; } }
+        public double CenterY { get { return centerY; } }
+
+        public double DeltaLatArc 
+        { 
+            get { return northBoundary - southBoundary; } 
+        }
+
+        public double DeltaLonArc
+        {
+            get { return eastBoundary - westBoundary; }
+        }
+
+        
+
+        public void SetContext(Area area, RectF dirtyRect)
         {
             Debug.WriteLine("centering the drawable... but in MapContext");
             if (area != null && area.Points != null && area.Points.Count > 0)
             {
-                double centerX;
-                double centerY;
 
 
                 centerX = area.Points.Aggregate(0.0, (sum, loc) =>

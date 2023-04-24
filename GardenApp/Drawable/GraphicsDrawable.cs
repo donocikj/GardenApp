@@ -22,16 +22,20 @@ namespace GardenApp.Drawable
         private double centerX;
         private double centerY;
 
-        private double westBound;
-        private double eastBound;
-        private double southBound;
-        private double northBound;
+        private double viewportWestBoundary;
+        private double viewportEastBoundary;
+        private double viewportSouthBoundary;
+        private double viewportNorthBoundary;
 
         private double areaWidth;
         private double areaHeight;
 
         private float mapWidth;
         private float mapHeight;
+
+        private double zoomFactor = 2.0;
+        private double xOffset = -0.5;
+        private double yOffset = 0.5;
 
 
         //constructor?
@@ -46,82 +50,37 @@ namespace GardenApp.Drawable
         public void Center(ICanvas canvas, RectF dirtyRect)
         {
 
-            mapContext.setContext(garden.Location, dirtyRect);
+            //todo - get rid of passing the rect - it should only be relevant to viewport
+            mapContext.SetContext(garden.Location, dirtyRect);
+
+            //this should refresh map context with garden's location parameters
+
+
+            //todo handle viewport aspect issues
+
+
+
+            //now to handle zoom and offset of the viewport
+            viewportWestBoundary = mapContext.CenterX + xOffset * (mapContext.DeltaLonArc / 2) - (mapContext.DeltaLonArc / (zoomFactor * 2));
+            viewportEastBoundary = mapContext.CenterX + xOffset * (mapContext.DeltaLonArc / 2) + (mapContext.DeltaLonArc / (zoomFactor * 2));
+            viewportSouthBoundary = mapContext.CenterY + yOffset * (mapContext.DeltaLatArc / 2) - (mapContext.DeltaLatArc / (zoomFactor * 2));
+            viewportNorthBoundary = mapContext.CenterY + yOffset * (mapContext.DeltaLatArc / 2) + (mapContext.DeltaLatArc / (zoomFactor * 2));
 
             /*
-             * 
-            Debug.WriteLine("centering the drawable...");
-            if (garden.Location != null && garden.Location.Points != null && garden.Location.Points.Count > 0)
-            {
+            areaWidth = mapContext.EastBoundary- mapContext.WestBoundary;
 
-                centerX = garden.Location.Points.Aggregate(0.0, (sum, loc) =>
-                {
-                    return sum + loc.Longitude;
-                }) / garden.Location.Points.Count;
+            areaHeight = mapContext.NorthBoundary- mapContext.SouthBoundary;
+            */
 
-                centerY = garden.Location.Points.Aggregate(0.0, (sum, loc) =>
-                {
-                    return sum + loc.Latitude;
-                }) / garden.Location.Points.Count;
+            areaWidth = viewportEastBoundary - viewportWestBoundary;
 
-                Debug.WriteLine(String.Format("centerpoint - lat: {0}, lon: {1}", centerY, centerX));
+            areaHeight = viewportNorthBoundary - viewportSouthBoundary;
 
-                //range the default viewport needs to cover
 
-                double minRange = garden.Location.Points.Aggregate(0.0, (range, loc) =>
-                {
-                    double dist = loc.CalculateDistance(new Location(centerY, centerX), DistanceUnits.Kilometers);
-                    return range > dist ? range : dist;
-                });
+            mapWidth = dirtyRect.Width;
+            mapHeight = dirtyRect.Height;
 
-                Debug.WriteLine(String.Format("calculated range: {0} m", minRange * 1000));
 
-                //set up bounds
-
-                double latRange;
-                double lonRange;
-
-                if (dirtyRect.Height > dirtyRect.Width)
-                {
-                    //tall order
-                    Debug.WriteLine("going tall: height - {0}, width - {1}", dirtyRect.Height, dirtyRect.Width);
-                    lonRange = minRange;
-                    latRange = minRange * (dirtyRect.Height / dirtyRect.Width);
-                } 
-                else
-                {
-                    //landscape view - or square
-                    Debug.WriteLine("going wide: height - {0}, width - {1}", dirtyRect.Height, dirtyRect.Width);
-                    latRange = minRange;
-                    lonRange = minRange * (dirtyRect.Width / dirtyRect.Height);
-                }
-
-                //todo something about that ugly constant at the end
-                double deltaLat = (latRange / ((Math.PI / 2) * 6378)) * 90;
-
-                southBound = centerY - deltaLat;
-                northBound = centerY + deltaLat;
-
-                double deltaLon = (lonRange / ((Math.PI) * (Math.Cos(northBound * Math.PI / 180) * 6378))) * 180;
-
-                westBound = centerX - deltaLon;
-                eastBound = centerX + deltaLon;
-
-                Debug.WriteLine(String.Format("delta lat: {0}, delta lon: {1}", deltaLat, deltaLon));
-
-                Debug.WriteLine(String.Format("Lat boundaries: {0} to {1}", southBound, northBound));
-                Debug.WriteLine(String.Format("Lon boundaries: {0} to {1}", westBound, eastBound));
-
-                */
-
-                areaWidth = mapContext.EastBoundary- mapContext.WestBoundary;
-
-                areaHeight = mapContext.NorthBoundary- mapContext.SouthBoundary;
-
-                mapWidth = dirtyRect.Width;
-                mapHeight = dirtyRect.Height;
-
-            // }
 
 
         }
@@ -195,8 +154,10 @@ namespace GardenApp.Drawable
             canvas.FillColor = color;
             canvas.StrokeSize = 2;
 
-            float pointX = (float)((point.Longitude - mapContext.WestBoundary) / areaWidth) * mapWidth;
-            float pointY = (float)((mapContext.NorthBoundary - point.Latitude) / areaHeight) * mapHeight;
+            float pointX = (float)((point.Longitude - viewportWestBoundary) / areaWidth) * mapWidth;
+            float pointY = (float)((viewportNorthBoundary - point.Latitude) / areaHeight) * mapHeight;
+
+            //todo add boundary check?
 
             canvas.DrawCircle(pointX, pointY, 2.0f);
         }
@@ -211,8 +172,8 @@ namespace GardenApp.Drawable
                 if(area.Points.Count == 1)
                 {
                     Debug.WriteLine("single point being rendered");
-                    float pointX = (float)((area.Points[0].Longitude - mapContext.WestBoundary) / areaWidth) * mapWidth;
-                    float pointY = (float)((mapContext.NorthBoundary - area.Points[0].Latitude) / areaHeight) * mapHeight;
+                    float pointX = (float)((area.Points[0].Longitude - viewportWestBoundary) / areaWidth) * mapWidth;
+                    float pointY = (float)((viewportNorthBoundary - area.Points[0].Latitude) / areaHeight) * mapHeight;
                     canvas.DrawCircle(pointX, pointY, 2.0f);
 
 
@@ -225,8 +186,8 @@ namespace GardenApp.Drawable
 
                     for (int i = 0; i < area.Points.Count; i++)
                     {
-                        float pointX = (float)((area.Points[i].Longitude - mapContext.WestBoundary) / areaWidth) * mapWidth;
-                        float pointY = (float)((mapContext.NorthBoundary - area.Points[i].Latitude) / areaHeight) * mapHeight;
+                        float pointX = (float)((area.Points[i].Longitude - viewportWestBoundary) / areaWidth) * mapWidth;
+                        float pointY = (float)((viewportNorthBoundary - area.Points[i].Latitude) / areaHeight) * mapHeight;
                         Debug.WriteLine(String.Format("rendering point at lon: {0}, lat: {1}; calculated to x: {2}, y: {3}", area.Points[i].Longitude, area.Points[i].Latitude, pointX, pointY));
                         if (i == 0)
                         {
@@ -245,8 +206,8 @@ namespace GardenApp.Drawable
                     //this looks nasty tbh
                     foreach(Location point in area.Points)
                     {
-                        float pointX = (float)((point.Longitude - mapContext.WestBoundary) / areaWidth) * mapWidth;
-                        float pointY = (float)((mapContext.NorthBoundary - point.Latitude) / areaHeight) * mapHeight;
+                        float pointX = (float)((point.Longitude - viewportWestBoundary) / areaWidth) * mapWidth;
+                        float pointY = (float)((viewportNorthBoundary - point.Latitude) / areaHeight) * mapHeight;
                         canvas.DrawCircle(pointX, pointY, 2.0f);
 
                     }
