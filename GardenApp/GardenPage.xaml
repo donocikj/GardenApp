@@ -33,6 +33,10 @@
                 WidthRequest="255"
                 x:Name="GardenMap"
                 >
+                <GraphicsView.GestureRecognizers>
+                    <PinchGestureRecognizer PinchUpdated="OnPinchUpdated"/>
+                    <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+                </GraphicsView.GestureRecognizers>
             
             </GraphicsView>
         </Frame>

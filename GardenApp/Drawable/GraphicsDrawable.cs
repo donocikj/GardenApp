@@ -33,9 +33,9 @@ namespace GardenApp.Drawable
         private float mapWidth;
         private float mapHeight;
 
-        private double zoomFactor = 2.0;
-        private double xOffset = -0.5;
-        private double yOffset = 0.5;
+        private double zoomFactor = 1.0;
+        private double xOffset = 0.0;
+        private double yOffset = 0.0;
 
 
         //constructor?
@@ -83,6 +83,24 @@ namespace GardenApp.Drawable
 
 
 
+        }
+
+        public void Pan(double xPan, double yPan)
+        {
+            this.xOffset -= (xPan / mapWidth) / zoomFactor;
+            this.yOffset += (yPan / mapHeight) / zoomFactor;
+        }
+
+        public void Zoom(double change)
+        {
+            this.zoomFactor = this.zoomFactor * change;
+        }
+
+        public void ResetZoom()
+        {
+            this.zoomFactor = 1.0;
+            this.xOffset = 0.0;
+            this.yOffset = 0.0;
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
