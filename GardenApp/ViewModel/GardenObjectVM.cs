@@ -21,7 +21,7 @@ namespace GardenApp.ViewModel
         private GraphicsDrawable gardenDrawable;
 
         private ICommand returnCommand;
-        private ICommand editLocationCommand;
+        private SetAreaCommand editLocationCommand;
 
         public GardenObjectVM(GraphicsDrawable gardenDrawable)
         {
@@ -86,7 +86,7 @@ namespace GardenApp.ViewModel
         }
 
         //todo command to edit object location - editareacommand
-        public ICommand EditLocationCommand
+        public SetAreaCommand EditLocationCommand
         {
             get
             {
@@ -134,6 +134,11 @@ namespace GardenApp.ViewModel
                 gardenDrawable.UpdateModel(receivedParentGarden as Garden);
                 gardenDrawable.SelectedObject = _object;
                 OnPropertyChanged(nameof(GardenDrawable));
+
+
+                if (editLocationCommand == null)
+                    editLocationCommand = new SetAreaCommand();
+                editLocationCommand.GardenContext = receivedParentGarden as Garden;
             }
             /*
             object locationUpdated;

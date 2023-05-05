@@ -49,7 +49,7 @@ public partial class GardenPage : ContentPage
 
     private void OnPanUpdated(object sender, PanUpdatedEventArgs e)
     {
-        Debug.WriteLine(String.Format("pan updated... totalX: {0}, totalY {1}", e.TotalX, e.TotalY));
+        //Debug.WriteLine(String.Format("pan updated... totalX: {0}, totalY {1}", e.TotalX, e.TotalY));
 		
 		
         GraphicsDrawable gardenDrawable = GardenMap.Drawable as GraphicsDrawable;

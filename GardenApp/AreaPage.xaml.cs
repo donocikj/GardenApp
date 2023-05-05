@@ -14,6 +14,16 @@ public partial class AreaPage : ContentPage
         //System.Diagnostics.Debug.WriteLine("context should have been bound to viewmodel:");
         //System.Diagnostics.Debug.WriteLine(viewModel.ToString());
         InitializeComponent();
-        //System.Diagnostics.Debug.WriteLine("component initialized");
+		//System.Diagnostics.Debug.WriteLine("component initialized");
+
+		//this looks excessive way to force updates...
+		viewModel.PropertyChanged += OnMapUpdateRequest;
     }
+
+	public void OnMapUpdateRequest(object sender, EventArgs e)
+	{
+		GardenMap.Invalidate();
+	}
+
+
 }

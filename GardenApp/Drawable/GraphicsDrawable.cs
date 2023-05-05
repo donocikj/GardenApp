@@ -37,6 +37,9 @@ namespace GardenApp.Drawable
         private double xOffset = 0.0;
         private double yOffset = 0.0;
 
+        private double degLatPerPx = 0;
+        private double degLonPerPx = 0;
+
 
         //constructor?
         public GraphicsDrawable(MapContext mapContext)
@@ -80,15 +83,18 @@ namespace GardenApp.Drawable
             mapWidth = dirtyRect.Width;
             mapHeight = dirtyRect.Height;
 
-
+            degLonPerPx = areaWidth / mapWidth;
+            degLatPerPx = areaHeight / mapHeight;
+            Debug.WriteLine(String.Format("calculated ratio deg lon per px: {0}", degLonPerPx));
+            Debug.WriteLine(String.Format("calculated ratio deg lat per px: {0}", degLatPerPx));
 
 
         }
 
         public void Pan(double xPan, double yPan)
         {
-            this.xOffset -= (xPan / mapWidth) / zoomFactor;
-            this.yOffset += (yPan / mapHeight) / zoomFactor;
+            this.xOffset -= (xPan / mapWidth) / (zoomFactor * 2);
+            this.yOffset += (yPan / mapHeight) / (zoomFactor * 2);
         }
 
         public void Zoom(double change)
@@ -105,7 +111,7 @@ namespace GardenApp.Drawable
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            Debug.WriteLine("drawing initiated");
+            //Debug.WriteLine("drawing initiated");
             if (garden == null || garden.Location.Points == null || garden.Location.Points.Count == 0)
             {
                 canvas.StrokeColor = Colors.Aqua;
@@ -122,7 +128,7 @@ namespace GardenApp.Drawable
                 if(garden.Location != null && garden.Location.Points != null && garden.Location.Points.Count > 0)
                 {
                     
-                    Debug.WriteLine("logic has reached the point where points will be examined...");
+                    //Debug.WriteLine("logic has reached the point where points will be examined...");
 
                     this.Center(canvas, dirtyRect);
 
@@ -164,9 +170,9 @@ namespace GardenApp.Drawable
         }
 
         public GardenObject SelectedObject { private get; set; } = null;
-        public Location SelectedLocation { private get; set;} = null;
+        public ObservableLocation SelectedLocation { private get; set;} = null;
 
-        public void DrawPoint(ICanvas canvas, Location point, Color color)
+        public void DrawPoint(ICanvas canvas, ObservableLocation point, Color color)
         {
             canvas.StrokeColor = color;
             canvas.FillColor = color;
@@ -189,7 +195,7 @@ namespace GardenApp.Drawable
 
                 if(area.Points.Count == 1)
                 {
-                    Debug.WriteLine("single point being rendered");
+                    //Debug.WriteLine("single point being rendered");
                     float pointX = (float)((area.Points[0].Longitude - viewportWestBoundary) / areaWidth) * mapWidth;
                     float pointY = (float)((viewportNorthBoundary - area.Points[0].Latitude) / areaHeight) * mapHeight;
                     canvas.DrawCircle(pointX, pointY, 2.0f);
@@ -198,7 +204,7 @@ namespace GardenApp.Drawable
                 } 
                 else
                 {
-                    Debug.WriteLine("shape getting rendered");
+                    //Debug.WriteLine("shape getting rendered");
 
                     PathF boundaryPath = new();
 
@@ -206,7 +212,7 @@ namespace GardenApp.Drawable
                     {
                         float pointX = (float)((area.Points[i].Longitude - viewportWestBoundary) / areaWidth) * mapWidth;
                         float pointY = (float)((viewportNorthBoundary - area.Points[i].Latitude) / areaHeight) * mapHeight;
-                        Debug.WriteLine(String.Format("rendering point at lon: {0}, lat: {1}; calculated to x: {2}, y: {3}", area.Points[i].Longitude, area.Points[i].Latitude, pointX, pointY));
+                        //Debug.WriteLine(String.Format("rendering point at lon: {0}, lat: {1}; calculated to x: {2}, y: {3}", area.Points[i].Longitude, area.Points[i].Latitude, pointX, pointY));
                         if (i == 0)
                         {
                             boundaryPath.MoveTo(pointX, pointY);
@@ -222,7 +228,7 @@ namespace GardenApp.Drawable
                     canvas.DrawPath(boundaryPath);
                     
                     //this looks nasty tbh
-                    foreach(Location point in area.Points)
+                    foreach(ObservableLocation point in area.Points)
                     {
                         float pointX = (float)((point.Longitude - viewportWestBoundary) / areaWidth) * mapWidth;
                         float pointY = (float)((viewportNorthBoundary - point.Latitude) / areaHeight) * mapHeight;
@@ -232,6 +238,19 @@ namespace GardenApp.Drawable
 
                 }
             }
+        }
+
+        public double PxToDegLon(int px)
+        {
+            //take viewport size boundaries...
+            //todo maybe move calculations here from center so it's not done more often than needed
+
+            return px * degLonPerPx;
+        }
+
+        public double PxToDegLat(int px)
+        {
+            return px * degLatPerPx;
         }
 
 

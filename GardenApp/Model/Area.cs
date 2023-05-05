@@ -13,17 +13,17 @@ namespace GardenApp.Model
     public class Area: INotifyPropertyChanged
 
     {
-        private ObservableCollection<Location> _points;
+        private ObservableCollection<ObservableLocation> _points;
 
         public Area()
         {
             Debug.WriteLine("area constructor called");
-            _points = new ObservableCollection<Location>();
+            _points = new ObservableCollection<ObservableLocation>();
         }
 
 
 
-        public ObservableCollection<Location> Points { 
+        public ObservableCollection<ObservableLocation> Points { 
             get { return _points; }
             set 
             { 
@@ -32,7 +32,7 @@ namespace GardenApp.Model
             }
         }
 
-        public void AddPoint(Location newPoint)
+        public void AddPoint(ObservableLocation newPoint)
         {
             Debug.WriteLine("adding a point to location");
             this._points.Add(newPoint);
@@ -40,7 +40,7 @@ namespace GardenApp.Model
             OnPropertyChanged(nameof(Points));
         }
 
-        public void RemovePoint(Location removedPoint)
+        public void RemovePoint(ObservableLocation removedPoint)
         {
             Debug.WriteLine(String.Format("removing a point from location at index {0}",this._points.IndexOf(removedPoint)));
             //todo maybe check and rework this - currently it seems to judge location by its coordinates and disregard its timestamp
@@ -51,7 +51,7 @@ namespace GardenApp.Model
             }
         }
 
-        public void MovePointInList(Location movedPoint, int shift)
+        public void MovePointInList(ObservableLocation movedPoint, int shift)
         {
             //todo check bounds or something
             int target = this._points.IndexOf(movedPoint) + shift;

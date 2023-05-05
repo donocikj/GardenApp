@@ -24,7 +24,7 @@ namespace GardenApp.ViewModel
         private ICommand saveGardenCommand;
         private ICommand loadGardenCommand;
         private ICommand pickGardenCommand;
-        private ICommand editAreaCommand;
+        private SetAreaCommand editAreaCommand;
         private ICommand editGardenObjectCommand;
         private ICommand shareGardenCommand;
         private ICommand gardenObjectDeleteCommand;
@@ -99,7 +99,8 @@ namespace GardenApp.ViewModel
             }
         }
 
-        public ICommand EditAreaCommand
+        //using SetAreaCommand seems ugly here... tbchanged later
+        public SetAreaCommand EditAreaCommand
         {
             get
             {
@@ -257,6 +258,10 @@ namespace GardenApp.ViewModel
             garden = await Garden.LoadGardenFromPickedFile();
             garden.Objects.CollectionChanged += this.OnCollectionChanged;
             OnPropertyChanged(nameof(Garden));
+
+            if (editAreaCommand == null)
+                editAreaCommand = new SetAreaCommand();
+            editAreaCommand.GardenContext = garden;
         }
 
 
@@ -266,10 +271,15 @@ namespace GardenApp.ViewModel
 
             //read and feed into the deserializer
             garden = await Garden.LoadGarden(gardenName);
+
             Debug.WriteLine("loaded a garden...");
             Debug.WriteLine(garden.ToString());
             garden.Objects.CollectionChanged += this.OnCollectionChanged;
             OnPropertyChanged(nameof(Garden));
+
+            if (editAreaCommand == null)
+                editAreaCommand = new SetAreaCommand();
+            editAreaCommand.GardenContext = garden;
         }
 
         #endregion

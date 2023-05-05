@@ -30,7 +30,7 @@ namespace GardenApp.Commands
         {
             //todo confirm the viewmodel has an area that can be added to
 
-            viewModel.AddLocationToArea(viewModel.CurrentLocation);
+            viewModel.AddLocationToArea(viewModel.SelectedLocation);
             //throw new NotImplementedException();
         }
     }

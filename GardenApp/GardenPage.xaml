@@ -29,8 +29,7 @@
             
             <GraphicsView 
                 Drawable="{Binding GardenDrawable}"
-                HeightRequest="255"
-                WidthRequest="255"
+
                 x:Name="GardenMap"
                 >
                 <GraphicsView.GestureRecognizers>

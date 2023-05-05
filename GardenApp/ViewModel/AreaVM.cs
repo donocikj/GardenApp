@@ -10,13 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GardenApp.Drawable;
+using Microsoft.Maui.Controls;
 
 namespace GardenApp.ViewModel
 {
     public class AreaVM : INotifyPropertyChanged, IQueryAttributable
     {
         private Area area;
-        private Location currentLocation;
+        private ObservableLocation selectedLocation;
 
         private GraphicsDrawable gardenDrawable;
 
@@ -26,9 +27,11 @@ namespace GardenApp.ViewModel
         private ICommand movePointInAreaUp;
         private ICommand movePointInAreaDown;
         private ICommand finishAreaDefinition;
+        private ICommand selectLocation;
 
-        public AreaVM()
+        public AreaVM(GraphicsDrawable gardenDrawable)
         {
+            this.gardenDrawable = gardenDrawable;
             Debug.WriteLine("constructor for areaVM called");
         }
 
@@ -60,7 +63,7 @@ namespace GardenApp.ViewModel
         }
        
 
-        public ObservableCollection<Location> Points
+        public ObservableCollection<ObservableLocation> Points
         {
             get {
                 if (area != null)
@@ -86,18 +89,19 @@ namespace GardenApp.ViewModel
         public string CurrentLocationStr
         {
             get { 
-                if (currentLocation == null)
+                if (selectedLocation == null)
                 {
                     return "not yet defined";
                 }
-                return currentLocation.ToString(); 
+                return selectedLocation.ToString(); 
             }
             
         }
 
-        public Location CurrentLocation
+        public ObservableLocation SelectedLocation
         {
-            get { return currentLocation; }
+            get { return selectedLocation; }
+            set { selectedLocation = value; onPropertyChanged(nameof(SelectedLocation), nameof(GardenDrawable)); }
         }
 
         #region commands
@@ -168,20 +172,39 @@ namespace GardenApp.ViewModel
             } 
         }
 
+        public ICommand SelectLocationCommand
+        {
+            get
+            {
+                if(selectLocation == null)
+                    selectLocation = new AreaSelectLocationCommand(this);
+                return selectLocation;
+            }
+        }
+
         #endregion
+
+
+        void OnLocationSelectionChanged(object sender, SelectionChangedEventArgs e) 
+        { 
+            SelectedLocation = e.CurrentSelection.FirstOrDefault() as ObservableLocation;
+
+        }
 
         #region tasks
 
         public async Task RefreshCurrentLocation()
         {
             Debug.WriteLine("attempting to obtain current location...");
-            currentLocation = await Geolocation.GetLocationAsync();
-            onPropertyChanged(nameof(CurrentLocationStr), nameof(CurrentLocation));
+            Location currentLocation = await Geolocation.GetLocationAsync();
+            selectedLocation = new ObservableLocation(currentLocation);
+            
+            onPropertyChanged(nameof(CurrentLocationStr), nameof(SelectedLocation));
             
         }
 
 
-        public void AddLocationToArea(Location location)
+        public void AddLocationToArea(ObservableLocation location)
         {
             if (area == null)
             {//todo some error handling
@@ -192,20 +215,20 @@ namespace GardenApp.ViewModel
             area.AddPoint(location);
             
             //is it really wise to split origin points of the propertychanged events...?
-            onPropertyChanged(nameof(AreaDesc));
+            onPropertyChanged(nameof(AreaDesc), nameof(GardenDrawable));
         }
 
-        public void RemoveLocationFromArea(Location location)
+        public void RemoveLocationFromArea(ObservableLocation location)
         {
             area.RemovePoint(location);
-            onPropertyChanged(nameof(AreaDesc));
+            onPropertyChanged(nameof(AreaDesc), nameof(GardenDrawable));
         }
 
-        public void MovePointInArea(Location location, int shift)
+        public void MovePointInArea(ObservableLocation location, int shift)
         {
             area.MovePointInList(location, shift);
             //hmm
-            onPropertyChanged(nameof(AreaDesc));
+            onPropertyChanged(nameof(AreaDesc), nameof(GardenDrawable));
         }
 
         public void EditPoint(Location location)
@@ -216,7 +239,7 @@ namespace GardenApp.ViewModel
 
         #endregion
 
-        //todo: remove a specific point from the area (something something collectionview stuff
+        
 
         protected void onPropertyChanged(params string[] propertyNames)
         {

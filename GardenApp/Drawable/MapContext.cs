@@ -40,7 +40,7 @@ namespace GardenApp.Drawable
 
         public void SetContext(Area area, RectF dirtyRect)
         {
-            Debug.WriteLine("centering the drawable... but in MapContext");
+            //Debug.WriteLine("centering the drawable... but in MapContext");
             if (area != null && area.Points != null && area.Points.Count > 0)
             {
 
@@ -55,7 +55,7 @@ namespace GardenApp.Drawable
                     return sum + loc.Latitude;
                 }) / area.Points.Count;
 
-                Debug.WriteLine(String.Format("centerpoint - lat: {0}, lon: {1}", centerY, centerX));
+                //Debug.WriteLine(String.Format("centerpoint - lat: {0}, lon: {1}", centerY, centerX));
 
                 //range the default viewport needs to cover
 
@@ -65,7 +65,7 @@ namespace GardenApp.Drawable
                     return range > dist ? range : dist;
                 });
 
-                Debug.WriteLine(String.Format("calculated range: {0} m", minRange * 1000));
+                //Debug.WriteLine(String.Format("calculated range: {0} m", minRange * 1000));
 
                 //set up bounds
 
@@ -75,17 +75,20 @@ namespace GardenApp.Drawable
                 if (dirtyRect.Height > dirtyRect.Width)
                 {
                     //tall order
-                    Debug.WriteLine("going tall: height - {0}, width - {1}", dirtyRect.Height, dirtyRect.Width);
+                    //Debug.WriteLine("going tall: height - {0}, width - {1}", dirtyRect.Height, dirtyRect.Width);
                     lonRange = minRange;
                     latRange = minRange * (dirtyRect.Height / dirtyRect.Width);
                 }
                 else
                 {
                     //landscape view - or square
-                    Debug.WriteLine("going wide: height - {0}, width - {1}", dirtyRect.Height, dirtyRect.Width);
+                    //Debug.WriteLine("going wide: height - {0}, width - {1}", dirtyRect.Height, dirtyRect.Width);
                     latRange = minRange;
                     lonRange = minRange * (dirtyRect.Width / dirtyRect.Height);
                 }
+
+
+                //Debug.WriteLine($"lonrange: {lonRange}, latrange: {latRange}, range aspect: {lonRange / latRange}, rectangle aspect: {dirtyRect.Width / dirtyRect.Height}");
 
                 //todo something about that ugly constant at the end
                 double deltaLat = (latRange / ((Math.PI / 2) * 6378)) * 90;
@@ -97,12 +100,12 @@ namespace GardenApp.Drawable
 
                 westBoundary = centerX - deltaLon;
                 eastBoundary = centerX + deltaLon;
+                
+                //Debug.WriteLine(String.Format("delta lat: {0}, delta lon: {1}", deltaLat, deltaLon));
 
-                Debug.WriteLine(String.Format("delta lat: {0}, delta lon: {1}", deltaLat, deltaLon));
-
-                Debug.WriteLine(String.Format("Lat boundaries: {0} to {1}", southBoundary, northBoundary));
-                Debug.WriteLine(String.Format("Lon boundaries: {0} to {1}", westBoundary, eastBoundary));
-
+                //Debug.WriteLine(String.Format("Lat boundaries: {0} to {1}", southBoundary, northBoundary));
+                //Debug.WriteLine(String.Format("Lon boundaries: {0} to {1}", westBoundary, eastBoundary));
+                
 
                 /*
                 areaWidth = eastBoundary - westBoundary;

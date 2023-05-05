@@ -10,9 +10,9 @@ using System.Windows.Input;
 
 namespace GardenApp.Commands
 {
-    internal class SetAreaCommand : ICommand
+    public class SetAreaCommand : ICommand
     {
-
+        private Garden gardenContext;
 
         public event EventHandler CanExecuteChanged;
 
@@ -37,10 +37,12 @@ namespace GardenApp.Commands
                 new Dictionary<string, object>
                 {
                     {"area", area},
-                    //todo how to get this...
-                    //{"gardenContext",  }
+                    {"gardenContext", gardenContext }
                 });
             //throw new NotImplementedException();
         }
+
+        //TODO think up another way to set this up
+        public Garden GardenContext { get { return gardenContext; } set { gardenContext = value; } }
     }
 }

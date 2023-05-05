@@ -26,7 +26,7 @@ namespace GardenApp.Commands
 
         public async void Execute(object parameter)
         {
-            System.Diagnostics.Debug.WriteLine("executing command to refresh current location..");
+            //System.Diagnostics.Debug.WriteLine("executing command to refresh current location..");
             await viewModel.RefreshCurrentLocation();
         }
     }

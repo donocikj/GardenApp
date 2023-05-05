@@ -9,20 +9,45 @@
              >
 
     <Grid
-        ColumnDefinitions="0.2*, 0.3*, 0.3*, 0.2*"
-        RowDefinitions="0.1*, 0.5*, 0.2*, 0.2*"
-        Padding="5">
+        ColumnDefinitions="0.2*, 0.4*, 0.2*, 0.2*"
+        RowDefinitions="0.05*, 0.55*, 0.05*, 0.05*, 0.05*, 0.05*, 0.1*, 0.1* "
+        Padding="3">
         
         <Label
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="2"
             Grid.Row="0"
             Text="{Binding AreaDesc}"/>
+
+        <Label
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            Grid.Row="0"
+            Text="current zoom will go here somehow, and calculation of what 10px means in it"
+            />
+
+        <GraphicsView
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            
+            Drawable="{Binding GardenDrawable}"
+
+            x:Name="GardenMap"
+            >
+            
+        </GraphicsView>
 
         <CollectionView
             Grid.Column="2"
             Grid.ColumnSpan="2"
             Grid.Row="1"
-            ItemsSource="{Binding Points}">
+            ItemsSource="{Binding Points}"
+            SelectionMode="Single"
+            x:Name="LocationCollection"
+            SelectionChangedCommand="{Binding SelectLocationCommand}"
+            SelectionChangedCommandParameter="{Binding SelectedItem, Source={x:Reference LocationCollection}}"
+            >
+
+
             <CollectionView.ItemTemplate>
                 <DataTemplate
                     x:DataType="sens:Location"
@@ -30,61 +55,75 @@
                     <Frame
                         HasShadow="True"
                         BorderColor="Gray"
+                        Padding="5"
                         >
                         <Grid
-                            Padding="3"
-                            RowDefinitions="auto, auto"
-                            ColumnDefinitions="0.15*, 0.15*, 0.15*, 0.15*, 0.1*, 0.1*, 0.1*"
-                            ColumnSpacing="2"
+                            Padding="0"
+                            Margin="0"
+                            RowDefinitions="20, 20, 20, 50"
+                            ColumnDefinitions="0.1*, 0.2*, 0.2*, 0.2*, 0.2*, 0.1*"
+                            ColumnSpacing="0.5"
                             >
                             <Label
                                 Grid.Row="0"
                                 Grid.Column="0"
+                                Grid.ColumnSpan="2"
                                 Text="Lat:"/>
-                            <Entry
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Text="{Binding Latitude}"/>
                             <Label
                                 Grid.Row="0"
                                 Grid.Column="2"
+                                Grid.ColumnSpan="4"
+                                Text="{Binding Latitude}"/>
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
                                 Text="Lon:"/>
-                            <Entry
-                                Grid.Row="0"
-                                Grid.Column="3"
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Grid.ColumnSpan="4"
                                 Text="{Binding Longitude}"/>
+
+
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AreaVM}}, Path=MovePointInAreaUpCommand}"
                                 CommandParameter="{Binding .}"
-                                Grid.Row="0"
-                                Grid.Column="4"
+                                Grid.Row="3"
+                                Grid.Column="2"
+                                Padding="0"
                                 BackgroundColor="Blue"
-                                Text="up"
+                                Text="Λ"
                                 />
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AreaVM}}, Path=MovePointInAreaDownCommand}"
                                 CommandParameter="{Binding .}"
-                                Grid.Row="0"
-                                Grid.Column="5"
+                                Grid.Row="3"
+                                Grid.Column="3"
+                                Padding="0"
+
                                 BackgroundColor="Blue"
-                                Text="down"
+                                Text="V"
                                 />
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AreaVM}}, Path=RemoveLocationFromAreaCommand}"
                                 CommandParameter="{Binding .}"
-                                Grid.Row="0"
-                                Grid.Column="6"
+                                Grid.Row="3"
+                                Grid.Column="5"
+                                Padding="0"
                                 BackgroundColor="DarkRed"
                                 Text="X"
                                 />
                             <Label 
-                                Grid.Row="1"
+                                Grid.Row="2"
                                 Grid.Column="0"
+                                Grid.ColumnSpan="2"
                                 Text="Accy"
                                 />
                             <Label
-                                Grid.Row="1"
-                                Grid.Column="1"
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Grid.ColumnSpan="4"
                                 Text="{Binding Accuracy}"/>
                         </Grid>
                     </Frame>
@@ -96,7 +135,7 @@
         </CollectionView>
 
         <Label
-            Text="current loc"
+            Text="Selected location"
             Grid.Column="0"
             Grid.Row="2"
             />
@@ -106,21 +145,95 @@
             Grid.Row="2"
             />
 
-        <Button
+        <Label
+            Text="Latitude:"
             Grid.Column="0"
             Grid.Row="3"
+            
+            />
+
+        <Entry
+            Grid.Column="1"
+            Grid.Row="3"
+            Text="{Binding SelectedLocation.Latitude}"/>
+
+        <Label 
+            Text="Longitude:"
+            Grid.Column="0"
+            Grid.Row="4"
+            />
+
+        <Entry
+            Grid.Column="1"
+            Grid.Row="4"
+            Text="{Binding SelectedLocation.Longitude}"
+            />
+
+        <Label
+            Grid.Column="0"
+            Grid.Row="5"
+            Text="Accuracy:"
+            />
+
+        <Entry 
+            Grid.Column="1"
+            Grid.Row="5"
+            Text="{Binding SelectedLocation.Accuracy}"
+            />
+
+        <Frame
+            Grid.Column="2"
+            Grid.ColumnSpan="2"
+            Grid.Row="3"
+            Grid.RowSpan="4"
+            Padding="2"
+            BackgroundColor="Gray">
+            
+            <Grid
+                RowDefinitions="0.2*, 0.4*, 0.2*"
+                ColumnDefinitions="0.2*, 0.4*, 0.2*"
+                >
+                
+                <Button
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Text="Λ"
+                    />
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Text="V"
+                    />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="&lt;"
+                    />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Text="&gt;"
+                    />
+
+            </Grid>
+            
+        </Frame>
+
+        <Button
+            Grid.Column="0"
+            Grid.Row="7"
             Text="Add"
             Command="{Binding AddLocationToAreaCommand}"/>
         
         <Button
             Grid.Column="1"
-            Grid.Row="3"
+            Grid.Row="7"
             Text="Refresh location"
             Command="{Binding RefreshCurrentLocationCommand}"/>
         
         <Button
-            Grid.Column="2"
-            Grid.Row="3"
+            Grid.Column="3"
+            Grid.Row="7"
             Text="Finish"
             Command="{Binding FinishAreaDefinitionCommand}"/>
 

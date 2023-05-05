@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using GardenApp.Model;
 using GardenApp.ViewModel;
 
 namespace GardenApp.Commands
@@ -28,7 +29,7 @@ namespace GardenApp.Commands
         public void Execute(object parameter)
         {
 
-            Location locationToRemove = parameter as Location;
+            ObservableLocation locationToRemove = parameter as ObservableLocation;
             viewModel.RemoveLocationFromArea(locationToRemove);
         }
     }

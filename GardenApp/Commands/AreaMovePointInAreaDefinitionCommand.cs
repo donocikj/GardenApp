@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using GardenApp.Model;
 using GardenApp.ViewModel;
 
 namespace GardenApp.Commands
@@ -29,7 +30,7 @@ namespace GardenApp.Commands
 
         public void Execute(object parameter)
         {
-            Location movedLocation = parameter as Location;
+            ObservableLocation movedLocation = parameter as ObservableLocation;
             viewModel.MovePointInArea(movedLocation, shift);
         }
     }
