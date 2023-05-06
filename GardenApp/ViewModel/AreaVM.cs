@@ -28,6 +28,12 @@ namespace GardenApp.ViewModel
         private ICommand movePointInAreaDown;
         private ICommand finishAreaDefinition;
         private ICommand selectLocation;
+        private ICommand shiftLocationN;
+        private ICommand shiftLocationS;
+        private ICommand shiftLocationW;
+        private ICommand shiftLocationE;
+
+
 
         public AreaVM(GraphicsDrawable gardenDrawable)
         {
@@ -35,7 +41,7 @@ namespace GardenApp.ViewModel
             Debug.WriteLine("constructor for areaVM called");
         }
 
-        
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -53,6 +59,14 @@ namespace GardenApp.ViewModel
                 gardenDrawable.UpdateModel(receivedGarden as Garden);
                 onPropertyChanged(nameof(GardenDrawable));
             }
+
+            //I feel kind of dirty for doing this tbh... maybe at least
+            //TODO - deregister these on navigating out?
+            foreach(ObservableLocation point in area.Points)
+            {
+                point.PropertyChanged += MapUpdateRequest;
+            }
+
             onPropertyChanged(nameof(Points), nameof(AreaDesc));
 
         }
@@ -61,7 +75,7 @@ namespace GardenApp.ViewModel
         {
             get { return gardenDrawable; }
         }
-       
+
 
         public ObservableCollection<ObservableLocation> Points
         {
@@ -82,20 +96,20 @@ namespace GardenApp.ViewModel
             get {
                 if (area == null)
                     return "sum fing wong";
-                return area.ToString(); 
+                return area.ToString();
             }
         }
 
         public string CurrentLocationStr
         {
-            get { 
+            get {
                 if (selectedLocation == null)
                 {
                     return "not yet defined";
                 }
-                return selectedLocation.ToString(); 
+                return selectedLocation.ToString();
             }
-            
+
         }
 
         public ObservableLocation SelectedLocation
@@ -108,7 +122,7 @@ namespace GardenApp.ViewModel
 
         public ICommand RefreshCurrentLocationCommand
         {
-            get { 
+            get {
                 if (refreshLocation == null)
                     refreshLocation = new AreaRefreshCurrentLocationCommand(this);
                 return refreshLocation;
@@ -131,7 +145,7 @@ namespace GardenApp.ViewModel
         {
             get
             {
-                if(removeLocationFromArea == null)
+                if (removeLocationFromArea == null)
                 {
                     removeLocationFromArea = new AreaRemoveLocationFromAreaCommand(this);
                 }
@@ -143,7 +157,7 @@ namespace GardenApp.ViewModel
         {
             get
             {
-                if(movePointInAreaUp == null)
+                if (movePointInAreaUp == null)
                 {
                     movePointInAreaUp = new AreaMovePointInAreaDefinitionCommand(this, -1);
                 }
@@ -164,29 +178,69 @@ namespace GardenApp.ViewModel
         }
 
         public ICommand FinishAreaDefinitionCommand
-        { 
+        {
             get {
                 if (finishAreaDefinition == null)
                     finishAreaDefinition = new AreaFinishDefinitionCommand();
-                return finishAreaDefinition; 
-            } 
+                return finishAreaDefinition;
+            }
         }
 
         public ICommand SelectLocationCommand
         {
             get
             {
-                if(selectLocation == null)
+                if (selectLocation == null)
                     selectLocation = new AreaSelectLocationCommand(this);
                 return selectLocation;
+            }
+        }
+
+        public ICommand ShiftLocationNorthCommand
+        {
+            get
+            {
+                if (shiftLocationN == null)
+                    shiftLocationN = new AreaLocationGeographicShiftByStepCommand(this, Direction.North);
+                return shiftLocationN;
+            }
+        }
+
+        public ICommand ShiftLocationSouthCommand
+        {
+            get
+            {
+                if (shiftLocationS == null)
+                    shiftLocationS = new AreaLocationGeographicShiftByStepCommand(this, Direction.South);
+                return shiftLocationS;
+            }
+        }
+
+        public ICommand ShiftLocationWestCommand
+        {
+            get
+            {
+                if (shiftLocationW == null)
+                    shiftLocationW = new AreaLocationGeographicShiftByStepCommand(this, Direction.West);
+                return shiftLocationW;
+            }
+        }
+
+        public ICommand ShiftLocationEastCommand
+        {
+            get
+            {
+                if (shiftLocationE == null)
+                    shiftLocationE = new AreaLocationGeographicShiftByStepCommand(this, Direction.East);
+                return shiftLocationE;
             }
         }
 
         #endregion
 
 
-        void OnLocationSelectionChanged(object sender, SelectionChangedEventArgs e) 
-        { 
+        void OnLocationSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
             SelectedLocation = e.CurrentSelection.FirstOrDefault() as ObservableLocation;
 
         }
@@ -197,10 +251,11 @@ namespace GardenApp.ViewModel
         {
             Debug.WriteLine("attempting to obtain current location...");
             Location currentLocation = await Geolocation.GetLocationAsync();
-            selectedLocation = new ObservableLocation(currentLocation);
-            
+            this.SelectLocation(new ObservableLocation(currentLocation));
+            //this looks like it could cause memory leaks idk...
+            selectedLocation.PropertyChanged += MapUpdateRequest;
             onPropertyChanged(nameof(CurrentLocationStr), nameof(SelectedLocation));
-            
+
         }
 
 
@@ -213,7 +268,7 @@ namespace GardenApp.ViewModel
             }
 
             area.AddPoint(location);
-            
+
             //is it really wise to split origin points of the propertychanged events...?
             onPropertyChanged(nameof(AreaDesc), nameof(GardenDrawable));
         }
@@ -238,7 +293,10 @@ namespace GardenApp.ViewModel
 
 
         #endregion
-
+        public void MapUpdateRequest(object sender, EventArgs e)
+        {
+            onPropertyChanged(nameof(GardenDrawable));
+        }
         
 
         protected void onPropertyChanged(params string[] propertyNames)
@@ -251,6 +309,13 @@ namespace GardenApp.ViewModel
             }
         }
 
+        public void SelectLocation(ObservableLocation location)
+        {
+            this.selectedLocation = location;
+            this.GardenDrawable.SelectedLocation = location;
+            onPropertyChanged(nameof(GardenDrawable), nameof(SelectedLocation), nameof(CurrentLocationStr));
+            
+        }
 
 
     }

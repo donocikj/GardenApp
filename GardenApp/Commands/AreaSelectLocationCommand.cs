@@ -30,7 +30,7 @@ namespace GardenApp.Commands
         public void Execute(object parameter)
         {
             ObservableLocation selectedLocation = parameter as ObservableLocation;
-            vm.SelectedLocation = selectedLocation;
+            vm.SelectLocation(selectedLocation);
         }
     }
 }

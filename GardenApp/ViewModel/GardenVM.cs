@@ -274,8 +274,11 @@ namespace GardenApp.ViewModel
 
             Debug.WriteLine("loaded a garden...");
             Debug.WriteLine(garden.ToString());
+
+
             garden.Objects.CollectionChanged += this.OnCollectionChanged;
             OnPropertyChanged(nameof(Garden));
+
 
             if (editAreaCommand == null)
                 editAreaCommand = new SetAreaCommand();
