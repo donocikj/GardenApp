@@ -30,6 +30,9 @@ namespace GardenApp.ViewModel
         private ICommand gardenObjectDeleteCommand;
         private ICommand returnToMainCommand;
 
+        private ICommand startTrackingCommand;
+        private ICommand stopTrackingCommand;
+
         private GraphicsDrawable gardenDrawable;
 
 
@@ -151,6 +154,27 @@ namespace GardenApp.ViewModel
                 if (returnToMainCommand == null)
                     returnToMainCommand = new GardenViewReturnToMainCommand(this);
                 return returnToMainCommand;
+            }
+        }
+
+        public ICommand StartTrackingCommand
+        { 
+            get 
+            {
+                if (startTrackingCommand == null)
+                    startTrackingCommand = new LocationStartTrackingCommand(GardenDrawable.GardenLocationContext, this);
+                return startTrackingCommand;
+                    
+            } 
+        }
+
+        public ICommand StopTrackingCommand
+        {
+            get 
+            {
+                if (stopTrackingCommand == null)
+                    stopTrackingCommand = new LocationStopTrackingCommand(GardenDrawable.GardenLocationContext, this);
+                return stopTrackingCommand;
             }
         }
 
@@ -288,6 +312,11 @@ namespace GardenApp.ViewModel
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public void MapUpdateRequest(object sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(GardenDrawable));
+        }
 
         void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

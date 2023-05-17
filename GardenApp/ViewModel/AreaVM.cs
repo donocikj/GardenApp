@@ -250,10 +250,21 @@ namespace GardenApp.ViewModel
         public async Task RefreshCurrentLocation()
         {
             Debug.WriteLine("attempting to obtain current location...");
-            Location currentLocation = await Geolocation.GetLocationAsync();
-            this.SelectLocation(new ObservableLocation(currentLocation));
-            //this looks like it could cause memory leaks idk...
-            selectedLocation.PropertyChanged += MapUpdateRequest;
+
+            GeolocationRequest request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10));
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+            Location currentLocation = await Geolocation.GetLocationAsync(request, tokenSource.Token);
+
+            if (currentLocation != null ) 
+            { 
+                this.SelectLocation(new ObservableLocation(currentLocation));
+                selectedLocation.PropertyChanged += MapUpdateRequest;
+                //this looks like it could cause memory leaks idk...
+
+                //set the location as "current location" on drawable so it shows up and can be worked with...
+                //GardenDrawable.
+            }
             onPropertyChanged(nameof(CurrentLocationStr), nameof(SelectedLocation));
 
         }

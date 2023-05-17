@@ -16,7 +16,7 @@ public partial class GardenPage : ContentPage
 		BindingContext = vm;
 
 		//this.GardenMap.Invalidate();
-
+		vm.PropertyChanged += OnMapChanged;
 		//Debug.WriteLine(vm.saveGarden());
 	}
 

@@ -1,4 +1,5 @@
 ﻿using GardenApp.Drawable;
+using GardenApp.LocationService;
 using GardenApp.ViewModel;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -18,7 +19,7 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-
+		builder.Services.AddSingleton<LocationTracker>();
 		builder.Services.AddSingleton<MapContext>();
 		builder.Services.AddTransient<GraphicsDrawable>();
         builder.Services.AddSingleton<GardenVM>();

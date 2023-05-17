@@ -1,4 +1,5 @@
-﻿using GardenApp.Model;
+﻿using GardenApp.LocationService;
+using GardenApp.Model;
 using Microsoft.Maui.Devices.Sensors;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace GardenApp.Drawable
         private Garden garden;
         private GardenObject selectedObject;
         private Location selectedLocation;
+        private ObservableLocation currentLocation;
 
         private MapContext mapContext;
 
@@ -45,6 +47,19 @@ namespace GardenApp.Drawable
         public GraphicsDrawable(MapContext mapContext)
         {
             this.mapContext = mapContext;
+        }
+
+        public MapContext GardenLocationContext
+        { get { return this.mapContext; } }
+
+        public void StartTrackingCurrentLocation()
+        {
+            mapContext.CurrentLocationTracker.StartTracking();
+        }
+
+        public void StopTrackingCurrentLocation()
+        {
+            mapContext.CurrentLocationTracker.StopTracking();
         }
 
         //needed: translation from geographical coordinates into range 0-100, 0-100
@@ -85,8 +100,8 @@ namespace GardenApp.Drawable
 
             degLonPerPx = areaWidth / mapWidth;
             degLatPerPx = areaHeight / mapHeight;
-            Debug.WriteLine(String.Format("calculated ratio deg lon per px: {0}", degLonPerPx));
-            Debug.WriteLine(String.Format("calculated ratio deg lat per px: {0}", degLatPerPx));
+            //Debug.WriteLine(String.Format("calculated ratio deg lon per px: {0}", degLonPerPx));
+            //Debug.WriteLine(String.Format("calculated ratio deg lat per px: {0}", degLatPerPx));
 
 
         }
@@ -157,6 +172,12 @@ namespace GardenApp.Drawable
                         DrawPoint(canvas, SelectedLocation, Colors.Red);
                     }
 
+                    //if current location is defined...
+                    if (mapContext.CurrentLocationTracker.CurrentLocationEstimate != null)
+                    {
+                        DrawPoint(canvas, mapContext.CurrentLocationTracker.CurrentLocationEstimate, Colors.Black);
+                    }
+
                     //TEST
                     //DrawPoint(canvas, new Location(centerY, centerX), Colors.Black);
 
@@ -183,7 +204,7 @@ namespace GardenApp.Drawable
 
             //todo add boundary check?
 
-            canvas.DrawCircle(pointX, pointY, 2.0f);
+            canvas.DrawCircle(pointX, pointY, 3.0f);
         }
 
         public void DrawArea(ICanvas canvas, Area area, Color color)

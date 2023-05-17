@@ -1,4 +1,5 @@
-﻿using GardenApp.Model;
+﻿using GardenApp.LocationService;
+using GardenApp.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +19,8 @@ namespace GardenApp.Drawable
         private double centerX;
         private double centerY;
 
+        private LocationTracker locationTracker;
+
         public double WestBoundary { get { return westBoundary; } }
         public double EastBoundary { get { return eastBoundary; }  }
         public double NorthBoundary { get { return northBoundary; } }
@@ -36,7 +39,14 @@ namespace GardenApp.Drawable
             get { return eastBoundary - westBoundary; }
         }
 
+        public MapContext(LocationTracker locationTracker)
+        {
+            this.locationTracker = locationTracker;
+        }
         
+        public LocationTracker CurrentLocationTracker
+        { get { return locationTracker; } }
+
 
         public void SetContext(Area area, RectF dirtyRect)
         {

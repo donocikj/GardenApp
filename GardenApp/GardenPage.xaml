@@ -13,7 +13,7 @@
         
 
     <Grid
-        ColumnDefinitions="0.35*, 0.45*, 0.20*"
+        ColumnDefinitions="0.2*, 0.2*, 0.2*, 0.2*, 0.20*"
         RowDefinitions="0.1*, 0.1*, 0.1*, 0.1*, 0.1*, 0.5*"
         Padding="12"
         ColumnSpacing="5"
@@ -24,7 +24,7 @@
             Grid.Row="1"
             Grid.RowSpan="4"
             Grid.Column="0"
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="4"
             >
             
             <GraphicsView 
@@ -51,18 +51,31 @@
             Text="{Binding Garden.Description, Mode=TwoWay}"
             Grid.Column="1"
             Grid.Row="0"/>
-        
+
+        <Button
+            Command="{Binding StartTrackingCommand}"
+            Text="Track"
+            Grid.Column="2"
+            Grid.Row="0"
+            />
+        <Button 
+            Command="{Binding StopTrackingCommand}"
+            Text="Untrack"
+            Grid.Column="3"
+            Grid.Row="0"
+            />
+
         <Button
             Text="Share"
             Command="{Binding ShareGardenCommand}"
-            Grid.Column="2"
+            Grid.Column="4"
             Grid.Row="0"
             />
 
         <Button
             Command="{Binding SaveGardenCommand}"
             Text="Save"
-            Grid.Column="2"
+            Grid.Column="4"
             Grid.Row="1"
             />
         
@@ -72,14 +85,14 @@
             Command="{Binding EditAreaCommand}"
             CommandParameter="{Binding Garden.Location}"
             Text="Location"
-            Grid.Column="2"
+            Grid.Column="4"
             Grid.Row="3"
             />
 
         <Button
             Command="{Binding ReturnToMainCommand}"
             Text="return"
-            Grid.Column="2"
+            Grid.Column="4"
             Grid.Row="2"
             />
 
@@ -87,13 +100,13 @@
         <Button
             Command="{Binding EditGardenObjectCommand}"
             Text="Add obj"
-            Grid.Column="2"
+            Grid.Column="4"
             Grid.Row="4"
             />
 
         <CollectionView
             Grid.Row="5"
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="5"
             ItemsSource="{Binding Garden.Objects}">
             <CollectionView.ItemTemplate>
                 <DataTemplate
